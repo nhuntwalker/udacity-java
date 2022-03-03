@@ -1,47 +1,46 @@
 package ui;
 
-import java.util.Scanner;
-
 public class HotelApplication {
-    private static final String separator = "-------------------------------------------------";
-
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        MainMenu mainMenu = new MainMenu(scanner);
-        AdminMenu adminMenu = new AdminMenu(scanner);
+        InputDevice input = new InputDevice();
+        MainMenu mainMenu = new MainMenu(input);
+        AdminMenu adminMenu = new AdminMenu(input);
 
         System.out.println("Welcome to the Hotel Reservation Application");
         System.out.println();
-        System.out.println(separator);
         mainMenu.printMenuItems();
-        System.out.println(separator);
 
         String choice;
-        boolean goOn = true;
+        boolean keepGoing = true;
         String menuType = "main";
 
         do {
             System.out.println("Please enter a number for the menu option");
-            choice = scanner.nextLine();
 
             if (menuType.equals("main")) {
+                choice = input.getInput();
                 if (choice.equals("4")) {
+                    System.out.println("Switching to the admin menu");
                     menuType = "admin";
                     adminMenu.printMenuItems();
                 } else if (choice.equals("5")) {
-                    goOn = false;
+                    keepGoing = false;
                 } else {
                     mainMenu.selectMenuItem(choice);
+                    mainMenu.printMenuItems();
                 }
             } else {
+                choice = input.getInput();
                 if (choice.equals("5")) {
-                    menuType = "menu";
+                    System.out.println("Returning to the main menu");
+                    menuType = "main";
                     mainMenu.printMenuItems();
                 } else {
                     adminMenu.selectMenuItem(choice);
+                    adminMenu.printMenuItems();
                 }
             }
         }
-        while (goOn);
+        while (keepGoing);
     }
 }

@@ -11,12 +11,13 @@ public class ReservationService {
     private final HashMap<String, List<Reservation>> reservationsMap;
 
     public static Integer numReservations;
-    public static Integer numRooms;
+    public Integer numRooms;
 
     public ReservationService(){
         super();
         this.roomsMap = new HashMap<>();
         this.reservationsMap = new HashMap<>();
+        this.numRooms = 0;
     }
     public void addRoom(IRoom room) {
         roomsMap.put(room.getRoomNumber(), room);

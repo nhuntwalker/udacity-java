@@ -5,15 +5,14 @@ import model.*;
 
 import java.util.*;
 
-public class AdminMenu {
-    private final Map<String, String> menuItems;
+public class AdminMenu extends BaseMenu {
     private final AdminResource admin;
-    private final Scanner scanner;
+    private final InputDevice input;
 
-    public AdminMenu(Scanner scanner) {
-        this.scanner = scanner;
+    public AdminMenu(InputDevice input) {
+        super();
+        this.input = input;
         this.admin = new AdminResource();
-        this.menuItems = new HashMap<>();
 
         menuItems.put("1", "1. See all Customers");
         menuItems.put("2", "2. See all Rooms");
@@ -22,11 +21,6 @@ public class AdminMenu {
         menuItems.put("5", "5. Back to Main Menu");
     }
 
-    public void printMenuItems(){
-        for (String item : menuItems.values()) {
-            System.out.println(item);
-        }
-    }
     public void selectMenuItem(String menuSelection){
         switch (menuSelection) {
             case "1" -> seeCustomers();
@@ -37,7 +31,7 @@ public class AdminMenu {
         }
     }
     public void seeCustomers() {
-        Collection<Customer> customers = this.admin.getAllCustomers();
+        Collection<Customer> customers = admin.getAllCustomers();
         if (customers.size() == 0) {
             System.out.println("There are currently no customers.");
             return;
@@ -47,7 +41,7 @@ public class AdminMenu {
         }
     }
     public void seeRooms() {
-        Collection<IRoom> rooms = this.admin.getAllRooms();
+        Collection<IRoom> rooms = admin.getAllRooms();
         if (rooms.size() == 0) {
             System.out.println("There are currently no rooms. Please choose option 4 to add a room.");
             return;
@@ -57,7 +51,7 @@ public class AdminMenu {
         }
     }
     public void seeReservations() {
-        this.admin.displayAllReservations();
+        admin.displayAllReservations();
     }
     public void addRooms(){
         List<IRoom> rooms = new ArrayList<>();
@@ -66,7 +60,7 @@ public class AdminMenu {
             rooms.add(buildRoom());
 
             System.out.println("Would you like to add another room? (Y)es/(N)o");
-            String choice = this.scanner.nextLine().toLowerCase(Locale.ROOT);
+            String choice = input.getInput().toLowerCase(Locale.ROOT);
             if (choice.equals("n") || choice.equals("no")) {
                 done = true;
             } else if (choice.equals("y") || choice.equals("yes")) {
@@ -80,8 +74,8 @@ public class AdminMenu {
         String roomNumber;
         do {
             System.out.println("Enter the room number.");
-            roomNumber = this.scanner.nextLine();
-            if (!this.admin.doesRoomExist(roomNumber)) {
+            roomNumber = input.getInput();
+            if (!this.admin.doesRoomExist(roomNumber) && !roomNumber.equals("")) {
                 return roomNumber;
             }
             System.out.println("Room number " + roomNumber + " already exists. Try again.");
@@ -91,26 +85,33 @@ public class AdminMenu {
         double roomPrice;
         do {
             System.out.println("Enter the room's price in USD (>= 0):");
-            roomPrice = this.scanner.nextDouble();
-            if (roomPrice == 0.0 || roomPrice > 0.0) {
-                return roomPrice;
+
+            try {
+                roomPrice = Double.parseDouble(input.getInput());
+                if (roomPrice == 0.0 || roomPrice > 0.0) {
+                    return roomPrice;
+                }
+                System.out.println(roomPrice + " is not a valid room price. Try again.");
+            } catch (InputMismatchException exc) {
+                System.out.println("Please enter a numerical value for the room's price.");
             }
-            System.out.println(roomPrice + " is not a valid room price. Try again.");
+
         } while (true);
     }
     public RoomType getRoomType() {
         do {
             System.out.println("Enter the room's type. These are the room type options:");
             for (RoomType type : RoomType.values()) {
-                System.out.println(type.name());
+                System.out.println((type.ordinal() + 1) + " for " + type.name().toLowerCase(Locale.ROOT) + " bed.");
             }
 
-            String inputType = this.scanner.nextLine().toUpperCase(Locale.ROOT);
+            int inputType = Integer.parseInt(input.getInput()) - 1;
             for (RoomType type : RoomType.values()) {
-                if (type.name().equals(inputType)) {
+                if (type.ordinal() == inputType) {
                     return type;
                 }
             }
+            System.out.println(inputType + " is not a valid room type. Try again.");
         } while (true);
     }
     public IRoom buildRoom(){

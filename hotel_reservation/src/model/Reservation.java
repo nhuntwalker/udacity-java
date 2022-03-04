@@ -31,6 +31,6 @@ public class Reservation {
 
     @Override
     public String toString(){
-        return "Reservation for " + customer + " in room " + room + " checking in on " + checkInDate + " and checking out on " + checkOutDate;
+        return "Reservation for " + customer.getEmail() + " in room " + room + " from " + checkInDate + " to " + checkOutDate;
     }
 }

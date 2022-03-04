@@ -174,7 +174,10 @@ public class MainMenu extends BaseMenu {
         hotel.bookARoom(customer.getEmail(), room, checkInDate, checkOutDate);
     }
 
-    public void checkReservation(){}
+    public void checkReservation(){
+        // TODO: prompt for customer email with getEmail() and retrieve customer reservations with hotel.getCustomerReservations
+        // TODO: print every reservation returned
+    }
 
     public String getFirstName(){
         String firstName;

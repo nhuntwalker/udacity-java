@@ -10,16 +10,18 @@ public class ReservationService {
     private final HashMap<String, IRoom> roomsMap;
     private final HashMap<String, List<Reservation>> reservationsMap;
 
-    public static Integer numReservations;
-    public Integer numRooms;
+    public static Integer numReservations = 0;
+    public static Integer numRooms = 0;
 
     public ReservationService(){
         super();
         this.roomsMap = new HashMap<>();
         this.reservationsMap = new HashMap<>();
-        this.numRooms = 0;
     }
-    public void addRoom(IRoom room) {
+    public void addRoom(IRoom room) throws RoomConflictException {
+        if (getARoom(room.getRoomNumber()) != null) {
+            throw new RoomConflictException("Room with number " + room.getRoomNumber() + " already exists.");
+        }
         roomsMap.put(room.getRoomNumber(), room);
         numRooms++;
     }
@@ -48,6 +50,9 @@ public class ReservationService {
     }
     public Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate){
         Collection<List<Reservation>> allCustomerReservations = reservationsMap.values();
+        if (allCustomerReservations.size() == 0) {
+            return roomsMap.values();
+        }
 
         Set<IRoom> bookedRooms = new HashSet<>();
         for (List<Reservation> reservationList : allCustomerReservations) {
@@ -55,7 +60,11 @@ public class ReservationService {
                 if (
                         checkInDate.after(res.getCheckInDate()) && checkInDate.before(res.getCheckOutDate()) ||
                                 checkOutDate.after(res.getCheckInDate()) && checkOutDate.before(res.getCheckOutDate()) ||
-                                checkInDate.before(res.getCheckInDate()) && checkOutDate.after(res.getCheckOutDate())
+                                checkInDate.before(res.getCheckInDate()) && checkOutDate.after(res.getCheckOutDate()) ||
+                                checkInDate.equals(res.getCheckInDate()) ||
+                                checkInDate.equals(res.getCheckOutDate()) ||
+                                checkOutDate.equals(res.getCheckInDate()) ||
+                                checkOutDate.equals(res.getCheckOutDate())
                 ) {
                     bookedRooms.add(res.getRoom());
                 }

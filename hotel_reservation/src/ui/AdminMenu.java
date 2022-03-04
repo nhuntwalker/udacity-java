@@ -2,6 +2,7 @@ package ui;
 
 import api.AdminResource;
 import model.*;
+import service.RoomConflictException;
 
 import java.util.*;
 
@@ -67,7 +68,11 @@ public class AdminMenu extends BaseMenu {
                 System.out.println("Enter the information for the next room.");
             }
         }
-        this.admin.addRoom(rooms);
+        try {
+            this.admin.addRoom(rooms);
+        } catch (RoomConflictException exc) {
+            System.out.println("One of the rooms you attempted to create already exists.");
+        }
     }
 
     public String getRoomNumber() {

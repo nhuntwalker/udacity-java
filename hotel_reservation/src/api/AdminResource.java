@@ -4,6 +4,7 @@ import model.Customer;
 import model.IRoom;
 import service.CustomerService;
 import service.ReservationService;
+import service.RoomConflictException;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +21,7 @@ public class AdminResource {
     public Customer getCustomer(String email) {
         return cs.getCustomer(email);
     }
-    public void addRoom(List<IRoom> rooms){
+    public void addRoom(List<IRoom> rooms) throws RoomConflictException {
         for (IRoom room : rooms) {
             rs.addRoom(room);
         }

@@ -3,6 +3,8 @@ package ui;
 import api.HotelResource;
 import model.Customer;
 import model.IRoom;
+import model.Reservation;
+import service.CustomerConflictException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,10 +41,10 @@ public class MainMenu extends BaseMenu {
     }
 
     public Date getCheckInDate(){
-        System.out.println("Enter Check-in date " + dateFmt + "example 03/14/2022");
+        System.out.println("Enter Check-in date " + dateFmt + " (example: 03/14/2022)");
         do {
             String inputDate = input.getInput();
-            Date now = new Date();
+            Date now = new Date(System.currentTimeMillis());
             try {
                 Date checkIn = dateFormatter.parse(inputDate);
                 if (checkIn.before(now)) {
@@ -56,7 +58,7 @@ public class MainMenu extends BaseMenu {
         } while (true);
     }
     public Date getCheckOutDate(Date checkInDate) {
-        System.out.println("Enter Check-out date " + dateFmt + "example 03/15/2022. Ensure that it is after the check-in date.");
+        System.out.println("Enter Check-out date " + dateFmt + " (example: 03/15/2022). Ensure that it is after the check-in date.");
         do {
             String inputDate = input.getInput();
             try {
@@ -134,7 +136,7 @@ public class MainMenu extends BaseMenu {
                 System.out.println("We look forward to seeing you soon!");
                 return true;
             } else if (choice.equals("n") || choice.equals("no")) {
-                System.out.println("Please begin your registratin again.");
+                System.out.println("Please begin your registration again.");
                 return false;
             }
         } while(true);
@@ -175,8 +177,17 @@ public class MainMenu extends BaseMenu {
     }
 
     public void checkReservation(){
-        // TODO: prompt for customer email with getEmail() and retrieve customer reservations with hotel.getCustomerReservations
-        // TODO: print every reservation returned
+        System.out.println("Checking your reservation. Please enter your email");
+        String email = input.getInput();
+        Collection<Reservation> reservations = hotel.getCustomersReservations(email);
+
+        if (reservations == null) {
+            System.out.println("There are no reservations associated with email: " + email);
+            return;
+        }
+        for (Reservation reservation : reservations) {
+            System.out.println(reservation);
+        }
     }
 
     public String getFirstName(){
@@ -226,6 +237,8 @@ public class MainMenu extends BaseMenu {
             } catch (IllegalArgumentException exc) {
                 System.out.println("The input email " + email + " was invalid. Emails must be of the form name@domain.com");
                 System.out.println("Please try to enter your information again.");
+            } catch (CustomerConflictException exc) {
+                System.out.println("Two customer accounts can't exist with the same email.");
             }
         } while (true);
     }

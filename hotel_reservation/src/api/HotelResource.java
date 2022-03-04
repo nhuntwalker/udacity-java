@@ -3,6 +3,7 @@ package api;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
+import service.CustomerConflictException;
 import service.CustomerService;
 import service.ReservationService;
 
@@ -19,7 +20,7 @@ public class HotelResource {
         this.rs = new ReservationService();
     }
     public Customer getCustomer(String email) {return cs.getCustomer(email);}
-    public void createACustomer(String email, String firstName, String lastName) {cs.addCustomer(email, firstName, lastName);}
+    public void createACustomer(String email, String firstName, String lastName) throws CustomerConflictException {cs.addCustomer(email, firstName, lastName);}
     public IRoom getRoom(String roomNumber) {return rs.getARoom(roomNumber);}
     public Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate){
         return rs.reserveARoom(cs.getCustomer(customerEmail), room, checkInDate, checkOutDate);

@@ -25,11 +25,11 @@ public class Room implements IRoom {
         return type;
     }
     public boolean isFree(){
-        return price > 0;
+        return price == 0.0;
     }
 
     @Override
     public String toString(){
-        return "Room number: " + this.number + "\nPrice: " + this.price + "\nType: " + this.type.name();
+        return "Room number: " + this.number + " Price: " + this.price + " Type: " + this.type.name();
     }
 }

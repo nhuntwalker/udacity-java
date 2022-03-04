@@ -30,6 +30,6 @@ public class Room implements IRoom {
 
     @Override
     public String toString(){
-        return "Room number: " + this.number + "\nPrice: " + this.price + "\nType: " + this.type;
+        return "Room number: " + this.number + "\nPrice: " + this.price + "\nType: " + this.type.name();
     }
 }

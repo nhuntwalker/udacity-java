@@ -11,7 +11,7 @@ public class FreeRoom extends Room {
 
     @Override
     public String toString(){
-        return "Room number: " + this.number + "\nType: " + this.type;
+        return "Room number: " + this.number + "\nType: " + this.type.name();
     }
 }
 

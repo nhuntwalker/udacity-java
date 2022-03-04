@@ -72,17 +72,19 @@ public class MainMenu extends BaseMenu {
             return checkInDate;
         } while (true);
     }
-    public IRoom retrieveRoom(Collection<IRoom> rooms){
+
+    public boolean continueToBook(){
         do {
-            System.out.println("\nWould you like to book a room? (Y)es/(N)o");
+            System.out.println("\nWould you like to book one of these rooms? (Y)es/(N)o");
             String choice = input.getInput().toLowerCase(Locale.ROOT);
             if (choice.equals("y") || choice.equals("yes")) {
-                break;
+                return true;
             } else if (choice.equals("n") || choice.equals("no")){
-                return null;
+                return false;
             }
         } while (true);
-
+    }
+    public Customer getCustomerAccount(){
         Customer customer;
         do {
             System.out.println("Do you have an account with us? (Y)es/(N)o");
@@ -94,28 +96,48 @@ public class MainMenu extends BaseMenu {
                     System.out.println("There isn't an account on record with your email " + email + ". Please create an account and return to reserve a room.");
                     return null;
                 }
-                break;
+                return customer;
             } else if (choice.equals("n") || choice.equals("no")) {
                 System.out.println("Please create an account before reserving a room");
                 return null;
             }
         } while (true);
-
-        IRoom desiredRoom;
+    }
+    public IRoom retrieveRoom(Collection<IRoom> rooms){
         do {
             System.out.println("\nWhat room number would you like to reserve?");
             String desiredRoomNumber = input.getInput();
 
             for (IRoom room : rooms) {
                 if (room.getRoomNumber().equals(desiredRoomNumber)) {
-                    desiredRoom = room;
-                    break;
+                    return room;
                 }
             }
             System.out.println("Room number " + desiredRoomNumber + " isn't available. Please select from the rooms displayed above.");
         } while (true);
+    }
+    public boolean confirmRegistration(Date checkIn, Date checkOut, IRoom room, Customer customer){
+        System.out.println(separator);
+        System.out.println("This is your reservation");
+        System.out.println(customer.getFirstName() + " " + customer.getLastName());
+        System.out.println("Room: " + room.getRoomNumber());
+        System.out.println("Room type: " + room.getRoomType().name().toLowerCase(Locale.ROOT));
+        System.out.println("Price: " + room.getRoomPrice());
+        System.out.println("Check-in Date: " + dateFormatter.format(checkIn));
+        System.out.println("Check-out Date: " + dateFormatter.format(checkOut));
+        System.out.println(separator);
 
-        return desiredRoom;
+        do {
+            System.out.println("\nWould you like to confirm this registration? (Y)es/(N)o");
+            String choice = input.getInput().toLowerCase(Locale.ROOT);
+            if (choice.equals("y") || choice.equals("yes")) {
+                System.out.println("We look forward to seeing you soon!");
+                return true;
+            } else if (choice.equals("n") || choice.equals("no")) {
+                System.out.println("Please begin your registratin again.");
+                return false;
+            }
+        } while(true);
     }
     public void findAndReserveRoom(){
         // get desired date
@@ -134,10 +156,22 @@ public class MainMenu extends BaseMenu {
             System.out.println(room);
         }
 
-        // get a room
+        // continue to book?
+        if (!continueToBook()) {return;}
+
+        // get customer
+        Customer customer = getCustomerAccount();
+        if (customer == null) {return;}
+
+        // get room
         IRoom room = retrieveRoom(rooms);
 
         // confirm reservation
+        boolean confirmed = confirmRegistration(checkInDate, checkOutDate, room, customer);
+        if (!confirmed) {return;}
+
+        // book here
+        hotel.bookARoom(customer.getEmail(), room, checkInDate, checkOutDate);
     }
 
     public void checkReservation(){}

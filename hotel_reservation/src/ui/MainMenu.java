@@ -174,6 +174,13 @@ public class MainMenu extends BaseMenu {
 
         // book here
         hotel.bookARoom(customer.getEmail(), room, checkInDate, checkOutDate);
+
+        // show customer's reservations
+        Collection<Reservation> reservations = hotel.getCustomersReservations(customer.getEmail());
+        for (Reservation res : reservations) {
+            System.out.println("Here are your current reservations:");
+            System.out.println("- " + res);
+        }
     }
 
     public void checkReservation(){

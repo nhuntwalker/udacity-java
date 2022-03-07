@@ -4,20 +4,28 @@ import model.Customer;
 import model.IRoom;
 import model.Reservation;
 
+import javax.print.attribute.HashPrintServiceAttributeSet;
 import java.util.*;
 
+/**
+ * Service for managing the store and operations of reservations.
+ * Singleton pattern based on: https://www.tutorialspoint.com/design_pattern/singleton_pattern.htm
+ * @author Nick
+ */
 public class ReservationService {
-    private final HashMap<String, IRoom> roomsMap;
-    private final HashMap<String, List<Reservation>> reservationsMap;
+    private static HashMap<String, IRoom> roomsMap;
+    private static HashMap<String, List<Reservation>> reservationsMap;
+    private static final ReservationService instance = new ReservationService();
 
     public static Integer numReservations = 0;
     public static Integer numRooms = 0;
 
-    public ReservationService(){
+    private ReservationService(){
         super();
-        this.roomsMap = new HashMap<>();
-        this.reservationsMap = new HashMap<>();
+        roomsMap = new HashMap<>();
+        reservationsMap = new HashMap<>();
     }
+    public static ReservationService getInstance(){return instance;}
     public void addRoom(IRoom room) throws RoomConflictException {
         if (getARoom(room.getRoomNumber()) != null) {
             throw new RoomConflictException("Room with number " + room.getRoomNumber() + " already exists.");
@@ -89,5 +97,11 @@ public class ReservationService {
                 System.out.println(reservation);
             }
         }
+    }
+    protected void purgeReservations(){
+        roomsMap = new HashMap<>();
+        reservationsMap = new HashMap<>();
+        numReservations = 0;
+        numRooms = 0;
     }
 }

@@ -15,8 +15,8 @@ public class AdminResource {
 
     public AdminResource(){
         super();
-        this.cs = new CustomerService();
-        this.rs = new ReservationService();
+        this.cs = CustomerService.getInstance();
+        this.rs = ReservationService.getInstance();
     }
     public Customer getCustomer(String email) {
         return cs.getCustomer(email);

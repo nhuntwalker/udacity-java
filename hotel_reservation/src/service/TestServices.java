@@ -28,11 +28,11 @@ public class TestServices extends BaseTestRunner {
         testGetCustomersReservation();
     }
     public static void testCreateCustomerService(){
-        CustomerService cs = new CustomerService();
+        CustomerService cs = CustomerService.getInstance();
         pass("New CustomerService was able to be initialized: " + cs);
     }
     public static void testAddCustomer(){
-        CustomerService cs = new CustomerService();
+        CustomerService cs = CustomerService.getInstance();
         try {
             cs.addCustomer("john@gmail.com", "john", "blank");
         } catch (CustomerConflictException exc) {
@@ -42,9 +42,10 @@ public class TestServices extends BaseTestRunner {
             fail("A new customer was added but the count of customers didn't increase");
         }
         pass("A new customer was added and tracked within the CustomerService object");
+        cs.purgeCustomers();
     }
     public static void testGetCustomer(){
-        CustomerService cs = new CustomerService();
+        CustomerService cs = CustomerService.getInstance();
         String email = "john@gmail.com";
         if (cs.getCustomer(email) != null) {
             fail("A customer was able to be added despite not having been entered");
@@ -60,10 +61,11 @@ public class TestServices extends BaseTestRunner {
             fail("A customer had been added and yet they weren't able to be retrieved");
         }
         pass("A customer that was added was found");
+        cs.purgeCustomers();
     }
     public static void testCustomerConflict(){
         String email = "john@gmail.com";
-        CustomerService cs = new CustomerService();
+        CustomerService cs = CustomerService.getInstance();
         try {
             cs.addCustomer(email, "john", "blank");
         } catch (CustomerConflictException exc) {
@@ -75,9 +77,10 @@ public class TestServices extends BaseTestRunner {
         } catch (CustomerConflictException exc) {
             pass("Two customer accounts can't exist with the same email.");
         }
+        cs.purgeCustomers();
     }
     public static void testGetAllCustomers(){
-        CustomerService cs = new CustomerService();
+        CustomerService cs = CustomerService.getInstance();
         Collection<Customer> emptyCustomers = cs.getAllCustomers();
         if (emptyCustomers.size() != 0) {
             fail("Retrieved customers that shouldn't exist");
@@ -110,14 +113,15 @@ public class TestServices extends BaseTestRunner {
             }
         }
         pass("All customers that were added were able to be retrieved");
+        cs.purgeCustomers();
     }
 
     public static void testCreateReservationService(){
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         pass("Was able to create reservation service: " + rs);
     }
     public static void testAddRoom(){
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         Room room = new Room("101", 65.0, RoomType.SINGLE);
         try {
             rs.addRoom(room);
@@ -128,9 +132,10 @@ public class TestServices extends BaseTestRunner {
             fail("A room was added but not tracked");
         }
         pass("Room was successfully added and tracked");
+        rs.purgeReservations();
     }
     public static void testRoomConflict(){
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         Room room1 = new Room("101", 65.0, RoomType.SINGLE);
         Room room2 = new Room("101", 65.0, RoomType.DOUBLE);
         try {
@@ -140,9 +145,10 @@ public class TestServices extends BaseTestRunner {
         } catch (RoomConflictException exc) {
             pass("Cannot add another room with the same room number");
         }
+        rs.purgeReservations();
     }
     public static void testGetARoom(){
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         String roomId = "101";
         if (rs.getARoom(roomId) != null) {
             fail("A room was found even though none had been added");
@@ -160,9 +166,10 @@ public class TestServices extends BaseTestRunner {
             fail("Should have been able to retrieve the added room");
         }
         pass("A room that has been added is able to be retrieved");
+        rs.purgeReservations();
     }
     public static void testGetAllRooms(){
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         List<Room> rooms = new ArrayList<>();
         rooms.add(new Room("101", 65.0, RoomType.SINGLE));
         rooms.add(new Room("102", 65.0, RoomType.DOUBLE));
@@ -183,6 +190,7 @@ public class TestServices extends BaseTestRunner {
             }
         }
         pass("All rooms that were added were able to be retrieved");
+        rs.purgeReservations();
     }
     public static void testReserveARoom(){
         Customer c = new Customer("john", "blank", "john@email.com");
@@ -190,7 +198,7 @@ public class TestServices extends BaseTestRunner {
         Date checkIn = new Date();
         Date checkOut = new Date();
 
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         Reservation res = rs.reserveARoom(c, room, checkIn, checkOut);
         if (res != null) {
             fail("Was able to make a reservation for a room that doesn't exist yet");
@@ -217,13 +225,14 @@ public class TestServices extends BaseTestRunner {
         }
 
         pass("A room was able to be reserved");
+        rs.purgeReservations();
     }
     public static void testFindRooms(){
         Customer c = new Customer("john", "blank", "john@email.com");
         Date checkIn = new Date();
         Date checkOut = new Date();
 
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         Collection<IRoom> retrieved = rs.findRooms(checkIn, checkOut);
         if (retrieved.size() != 0) {
             fail("Rooms were found despite there being no rooms");
@@ -250,6 +259,7 @@ public class TestServices extends BaseTestRunner {
         }
 
         pass("Conflicting dates didn't return the an unavailable room.");
+        rs.purgeReservations();
     }
     public static void testGetCustomersReservation(){
         Customer c = new Customer("john", "blank", "john@email.com");
@@ -257,7 +267,7 @@ public class TestServices extends BaseTestRunner {
         Date checkIn = new Date();
         Date checkOut = new Date();
 
-        ReservationService rs = new ReservationService();
+        ReservationService rs = ReservationService.getInstance();
         Collection<Reservation> reservations = rs.getCustomersReservation(c);
         if (reservations != null) {
             fail("A customer's reservations were able to be retrieved despite there being none under that name");
@@ -276,5 +286,6 @@ public class TestServices extends BaseTestRunner {
             fail("When a reservation has been made, still can't get the customer's reservation");
         }
         pass("When a reservation has been made, that customer's reservations are returned");
+        rs.purgeReservations();
     }
 }

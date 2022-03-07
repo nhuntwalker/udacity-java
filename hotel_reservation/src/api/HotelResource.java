@@ -16,8 +16,8 @@ public class HotelResource {
 
     public HotelResource(){
         super();
-        this.cs = new CustomerService();
-        this.rs = new ReservationService();
+        this.cs = CustomerService.getInstance();
+        this.rs = ReservationService.getInstance();
     }
     public Customer getCustomer(String email) {return cs.getCustomer(email);}
     public void createACustomer(String email, String firstName, String lastName) throws CustomerConflictException {cs.addCustomer(email, firstName, lastName);}

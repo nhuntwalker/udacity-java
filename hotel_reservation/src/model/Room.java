@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Locale;
+
 /** A room in the hotel.
  *
  * @author Nicholas Hunt-Walker
@@ -30,6 +32,6 @@ public class Room implements IRoom {
 
     @Override
     public String toString(){
-        return "Room number: " + this.number + " Price: " + this.price + " Type: " + this.type.name();
+        return "number: " + this.number + " Price: " + String.format("$%.2f", this.price) + " Type: " + this.type.name().toLowerCase(Locale.ROOT);
     }
 }

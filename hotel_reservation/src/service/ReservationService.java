@@ -4,7 +4,6 @@ import model.Customer;
 import model.IRoom;
 import model.Reservation;
 
-import javax.print.attribute.HashPrintServiceAttributeSet;
 import java.util.*;
 
 /**

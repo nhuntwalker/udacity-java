@@ -15,7 +15,7 @@ import java.util.Locale;
 public class MainMenu extends BaseMenu {
     private final HotelResource hotel;
     private final InputDevice input;
-    private final String dateFmt = "mm/dd/yyyy";
+    private final String dateFmt = "MM/dd/yyyy";
     // Date formatter source, accessed 3 Mar 2022: https://www.baeldung.com/java-string-to-date#string-date
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFmt, Locale.ENGLISH);
 
@@ -41,10 +41,10 @@ public class MainMenu extends BaseMenu {
     }
 
     public Date getCheckInDate(){
-        System.out.println("Enter Check-in date " + dateFmt + " (example: 03/14/2022)");
+        System.out.println("Enter Check-in date " + dateFmt.toLowerCase(Locale.ROOT) + " (example: 03/14/2022)");
+        Date now = new Date(System.currentTimeMillis());
         do {
             String inputDate = input.getInput();
-            Date now = new Date(System.currentTimeMillis());
             try {
                 Date checkIn = dateFormatter.parse(inputDate);
                 if (checkIn.before(now)) {
@@ -53,12 +53,12 @@ public class MainMenu extends BaseMenu {
                 }
                 return checkIn;
             } catch (ParseException exc) {
-                System.out.println(inputDate + " is an improperly-formatted date. Try again using the format " + dateFmt);
+                System.out.println(inputDate + " is an improperly-formatted date. Try again using the format " + dateFmt.toLowerCase(Locale.ROOT));
             }
         } while (true);
     }
     public Date getCheckOutDate(Date checkInDate) {
-        System.out.println("Enter Check-out date " + dateFmt + " (example: 03/15/2022). Ensure that it is after the check-in date.");
+        System.out.println("Enter Check-out date " + dateFmt.toLowerCase(Locale.ROOT) + " (example: 03/15/2022). Ensure that it is after the check-in date.");
         do {
             String inputDate = input.getInput();
             try {
@@ -69,7 +69,7 @@ public class MainMenu extends BaseMenu {
                 }
                 return checkOut;
             } catch (ParseException exc) {
-                System.out.println(inputDate + " is an improperly-formatted date. Try again using the format " + dateFmt);
+                System.out.println(inputDate + " is an improperly-formatted date. Try again using the format " + dateFmt.toLowerCase(Locale.ROOT));
             }
             return checkInDate;
         } while (true);
@@ -124,7 +124,7 @@ public class MainMenu extends BaseMenu {
         System.out.println(customer.getFirstName() + " " + customer.getLastName());
         System.out.println("Room: " + room.getRoomNumber());
         System.out.println("Room type: " + room.getRoomType().name().toLowerCase(Locale.ROOT));
-        System.out.println("Price: " + room.getRoomPrice());
+        System.out.println("Price: " + String.format("$%.2f", room.getRoomPrice()));
         System.out.println("Check-in Date: " + dateFormatter.format(checkIn));
         System.out.println("Check-out Date: " + dateFormatter.format(checkOut));
         System.out.println(separator);

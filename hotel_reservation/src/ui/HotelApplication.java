@@ -31,7 +31,7 @@ public class HotelApplication {
                 }
             } else {
                 choice = input.getInput();
-                if (choice.equals("5")) {
+                if (choice.equals("6")) {
                     System.out.println("Returning to the main menu");
                     menuType = "main";
                     mainMenu.printMenuItems();

@@ -1,13 +1,17 @@
 package ui;
 
 import api.AdminResource;
+import api.HotelResource;
 import model.*;
 import service.RoomConflictException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class AdminMenu extends BaseMenu {
     private final AdminResource admin;
+    private final HotelResource hotel;
     private final InputDevice input;
     private final Random randGen = new Random();
 
@@ -15,6 +19,7 @@ public class AdminMenu extends BaseMenu {
         super();
         this.input = input;
         this.admin = new AdminResource();
+        this.hotel = new HotelResource();
 
         menuItems.put("1", "1. See all Customers");
         menuItems.put("2", "2. See all Rooms");
@@ -134,10 +139,21 @@ public class AdminMenu extends BaseMenu {
         }
     }
     public void populateTestData() {
+        if (this.admin.numRooms() > 0 || this.admin.numReservations() > 0 || this.admin.numCustomers() > 0) {
+            System.out.println("No test data will be generated, as there is pre-existing data");
+            return;
+        }
+        System.out.println("Generating 10 rooms with prices");
         generateRooms(10, false);
+
+        System.out.println("Generating 5 free rooms");
         generateRooms(5, true);
-//        build customers
-//        build reservations
+
+        System.out.println("Generating 5 customers");
+        generateCustomers();
+
+        System.out.println("Generating 3 reservations");
+        generateReservations();
     }
     private void generateRooms(int count, boolean isFree) {
         List<IRoom> newRooms = new ArrayList<>();
@@ -162,6 +178,31 @@ public class AdminMenu extends BaseMenu {
             this.admin.addRoom(newRooms);
         } catch (RoomConflictException exc) {
             System.out.println("One of the rooms you attempted to create already exists.");
+        }
+    }
+    private void generateCustomers() {
+        try {
+            this.hotel.createACustomer("ntowns@gmail.com", "Niram", "Townsend");
+            this.hotel.createACustomer("renell.hughes@gmail.com", "Renell", "Hughes");
+            this.hotel.createACustomer("naleisan@gmail.com", "Naleisa", "Nichols");
+            this.hotel.createACustomer("raenia9212@gmail.com", "Raenia", "Christian");
+            this.hotel.createACustomer("e.montgomery@gmail.com", "Elvin", "Montgomery");
+        } catch (service.CustomerConflictException exc) {
+            System.out.println("Unable to build all test customers due to a name conflict");
+        }
+    }
+    private void generateReservations() {
+        Collection<IRoom> rooms = this.admin.getAllRooms();
+        handleReservation(this.hotel.getRoom("101"), "ntowns@gmail.com", "06/11/2022", "06/13/2022");
+        handleReservation(this.hotel.getRoom("102"), "renell.hughes@gmail.com", "05/03/2022", "05/04/2022");
+        handleReservation(this.hotel.getRoom("103"), "naleisan@gmail.com", "08/17/2022", "08/21/2022");
+    }
+    private void handleReservation(IRoom room, String email, String checkIn, String checkOut){
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        try {
+            this.hotel.bookARoom(email, room, dateFormatter.parse(checkIn), dateFormatter.parse(checkOut));
+        } catch (ParseException exc) {
+            System.out.println("Given reservation dates are improperly formatted");
         }
     }
 }

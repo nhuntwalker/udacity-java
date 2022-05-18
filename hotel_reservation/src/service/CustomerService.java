@@ -38,4 +38,5 @@ public class CustomerService {
         customerMap = new HashMap<>();
         numberOfCustomers = 0;
     }
+    public int getCustomerCount(){ return numberOfCustomers; }
 }

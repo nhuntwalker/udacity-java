@@ -44,4 +44,7 @@ public class AdminResource {
     public void displayAllReservations(){
         rs.printAllReservations();
     }
+    public int numReservations() { return rs.getReservationsCount(); }
+    public int numRooms() { return rs.getRoomsCount(); }
+    public int numCustomers() {return cs.getCustomerCount(); }
 }

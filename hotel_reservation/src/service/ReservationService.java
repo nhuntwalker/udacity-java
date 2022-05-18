@@ -103,4 +103,6 @@ public class ReservationService {
         numReservations = 0;
         numRooms = 0;
     }
+    public int getRoomsCount(){ return numRooms; }
+    public int getReservationsCount(){ return numReservations; }
 }

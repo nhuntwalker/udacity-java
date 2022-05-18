@@ -41,14 +41,14 @@ public class MainMenu extends BaseMenu {
     }
 
     public Date getCheckInDate(){
-        System.out.println("Enter Check-in date " + dateFmt.toLowerCase(Locale.ROOT) + " (example: 03/14/2022)");
         Date now = new Date(System.currentTimeMillis());
+        System.out.println("Enter Check-in date after today " + dateFmt.toLowerCase(Locale.ROOT) + " (example: " + dateFormatter.format(now) + ")");
         do {
             String inputDate = input.getInput();
             try {
                 Date checkIn = dateFormatter.parse(inputDate);
                 if (checkIn.before(now)) {
-                    System.out.println("Check-in date is before today. Please enter a date after today.");
+                    System.out.println("Check-in date " + dateFormatter.format(checkIn) + " is before or is today. Please enter a date after today.");
                     continue;
                 }
                 return checkIn;

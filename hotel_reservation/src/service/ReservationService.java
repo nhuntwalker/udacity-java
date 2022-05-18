@@ -97,7 +97,7 @@ public class ReservationService {
             }
         }
     }
-    protected void purgeReservations(){
+    void purgeReservations(){
         roomsMap = new HashMap<>();
         reservationsMap = new HashMap<>();
         numReservations = 0;

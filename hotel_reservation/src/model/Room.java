@@ -7,9 +7,9 @@ import java.util.Locale;
  * @author Nicholas Hunt-Walker
  */
 public class Room implements IRoom {
-    protected String number;
-    protected Double price;
-    protected RoomType type;
+    private String number;
+    private Double price;
+    private RoomType type;
 
     public Room(String number, Double price, RoomType type){
         this.number = number;

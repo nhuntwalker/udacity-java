@@ -9,6 +9,7 @@ import java.util.*;
 public class AdminMenu extends BaseMenu {
     private final AdminResource admin;
     private final InputDevice input;
+    private final Random randGen = new Random();
 
     public AdminMenu(InputDevice input) {
         super();
@@ -19,7 +20,8 @@ public class AdminMenu extends BaseMenu {
         menuItems.put("2", "2. See all Rooms");
         menuItems.put("3", "3. See all Reservations");
         menuItems.put("4", "4. Add a Room");
-        menuItems.put("5", "5. Back to Main Menu");
+        menuItems.put("5", "5. Populate test data");
+        menuItems.put("6", "6. Back to Main Menu");
     }
 
     public void selectMenuItem(String menuSelection){
@@ -28,6 +30,7 @@ public class AdminMenu extends BaseMenu {
             case "2" -> seeRooms();
             case "3" -> seeReservations();
             case "4" -> addRooms();
+            case "5" -> populateTestData();
             default -> printMenuItems();
         }
     }
@@ -128,6 +131,37 @@ public class AdminMenu extends BaseMenu {
             return new FreeRoom(roomNumber, roomType);
         } else {
             return new Room(roomNumber, roomPrice, roomType);
+        }
+    }
+    public void populateTestData() {
+        generateRooms(10, false);
+        generateRooms(5, true);
+//        build customers
+//        build reservations
+    }
+    private void generateRooms(int count, boolean isFree) {
+        List<IRoom> newRooms = new ArrayList<>();
+        for (int i = 1; i < count; i++) {
+            RoomType rType;
+            if (i % 2 == 0) {
+                rType = RoomType.SINGLE;
+            } else {
+                rType = RoomType.DOUBLE;
+            }
+
+            IRoom room;
+            if (!isFree) {
+                double price = randGen.nextInt(50, 500);
+                room = new Room("10" + i, price, rType);
+            } else {
+                room = new FreeRoom("20" + i, rType);
+            }
+            newRooms.add(room);
+        }
+        try {
+            this.admin.addRoom(newRooms);
+        } catch (RoomConflictException exc) {
+            System.out.println("One of the rooms you attempted to create already exists.");
         }
     }
 }
